@@ -2,7 +2,7 @@ CC      = cc
 CFLAGS  = -Wall -Wextra -pedantic -std=c99 -Isource -Isource/common
 LDFLAGS =
 
-SRC     = source/main.c source/lex.c source/post.c source/builtin/builtin.c
+SRC     = source/main.c source/lex.c source/post.c source/builtin.c source/builtin/exit.c source/builtin/echo.c
 OBJ     = $(SRC:.c=.o)
 BIN     = nsh
 
