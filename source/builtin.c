@@ -2,17 +2,17 @@
 
 #include "builtin/exit.h"
 #include "builtin/echo.h"
+#include "builtin/type.h"
 
 #include <string.h>
 #include <stdlib.h>
 
-#define NSH_BUILTIN_BUILTIN_COUNT 2
+#define NSH_BUILTIN_BUILTIN_COUNT 3
 
-static int32_t _cmp (const void *p, const void *q)
+static int32_t _sort (const void *p, const void *q)
 {
 	const char *name1 = ((struct BuiltInCmd*) p)->name;
 	const char *name2 = ((struct BuiltInCmd*) q)->name;
-
 	return strcmp(name1, name2);
 }
 
@@ -20,7 +20,6 @@ static int32_t _search (const void *p, const void *q)
 {
 	struct BuiltInCmd *d = (struct BuiltInCmd*) p;
 	struct BuiltInCmd *b = (struct BuiltInCmd*) q;
-
 	return strncmp(d->name, b->name, d->length);
 }
 
@@ -29,13 +28,14 @@ static const struct BuiltInCmd *_get_all (void)
 {
 	static bool initd = false;
 	static struct BuiltInCmd cmds[NSH_BUILTIN_BUILTIN_COUNT] = {
-		{ .name = "exit", .length = 4, .run = exit_builtin_run },
-		{ .name = "echo", .length = 4, .run = echo_builtin_run }
+		{ .name = "exit", .run = exit_builtin_run },
+		{ .name = "echo", .run = echo_builtin_run },
+		{ .name = "type", .run = type_builtin_run }
 	};
 
 	if (!initd)
 	{
-		qsort(cmds, NSH_BUILTIN_BUILTIN_COUNT, sizeof(cmds[0]), _cmp);
+		qsort(cmds, NSH_BUILTIN_BUILTIN_COUNT, sizeof(cmds[0]), _sort);
 		initd = true;
 	}
 	return cmds;

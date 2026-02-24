@@ -5,14 +5,14 @@
 
 enum LexTokenType
 {
-	LEX_TOK_TYPE_HEAD,
+	LEX_TOK_TYPE_WORD,
 };
 
 struct LexToken
 {
-	const char *source;
-	const size_t length;
-	const enum LexTokenType type;
+	char *source;
+	size_t length;
+	enum LexTokenType type;
 };
 
 #endif

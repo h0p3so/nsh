@@ -4,7 +4,7 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#define NSH_MAIN_PROMPT_MAX_LENGTH 4096
+#define NSH_MAIN_CMDLINE_MAX_LENGTH 4096
 
 static void _setup (void)
 {
@@ -13,19 +13,15 @@ static void _setup (void)
 
 static void _repl ()
 {
-	char prompt[NSH_MAIN_PROMPT_MAX_LENGTH] = {0};
+	char cmdline[NSH_MAIN_CMDLINE_MAX_LENGTH] = {0};
 	while (true)
 	{
 		printf("$ ");
-		const size_t promptLength = read(STDIN_FILENO, prompt, NSH_MAIN_PROMPT_MAX_LENGTH);
-		prompt[promptLength - 1] = '\0'; // XXX: temp solution
+		const size_t cmdlineLength = read(STDIN_FILENO, cmdline, NSH_MAIN_CMDLINE_MAX_LENGTH);
+		cmdline[cmdlineLength - 1] = '\0';
 
-		const struct LexToken head = lex_get_header(prompt, promptLength);
+		struct LexToken *stream = lex_gen_stream(cmdline, cmdlineLength);
 
-		if (post_is_builtin(&head))
-		{ continue; }
-
-		printf("%.*s: command not found\n", (uint32_t) head.length, head.source);
 	}
 }
 
