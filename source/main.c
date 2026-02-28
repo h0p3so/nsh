@@ -21,7 +21,14 @@ static void _repl ()
 		cmdline[cmdlineLength - 1] = '\0';
 
 		struct LexToken *stream = lex_gen_stream(cmdline, cmdlineLength);
+		if (stream == NULL)
+		{ continue; }
 
+		const bool isbuiltin = post_is_builtin(stream);
+		if (isbuiltin)
+		{ continue; }
+
+		lex_free_stream(stream);
 	}
 }
 

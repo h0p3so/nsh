@@ -4,7 +4,7 @@
 #include <ctype.h>
 #include <stdio.h>
 
-struct LexToken _get_word (const char *cmdline, size_t *pos)
+static struct LexToken _get_word (const char *cmdline, size_t *pos)
 {
 	struct LexToken token = {
 		.type = LEX_TOK_TYPE_WORD,
@@ -33,7 +33,10 @@ struct LexToken *lex_gen_stream (const char *cmdline, const size_t cmdlineLength
 		}
 	}
 
-	return stream;
+	return (stdv_size(stream)) ? stream : NULL;
 }
 
-
+void lex_free_stream (const struct LexToken *stream)
+{
+	stdv_free(stream);
+}
