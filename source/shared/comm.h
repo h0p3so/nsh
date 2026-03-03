@@ -1,5 +1,5 @@
-#ifndef NSH_COMMON_COMMON_H
-#define NSH_COMMON_COMMON_H
+#ifndef NSH_SHARED_COMM_H
+#define NSH_SHARED_COMM_H
 
 #define NULL ((void *)0)
 
