@@ -1,4 +1,5 @@
 #include "shared/comm.h"
+#include "lex.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -17,10 +18,12 @@ static void _main_repl (void)
 	{
 		printf("$ ");
 		const size_t cmdlinelen = read(STDIN_FILENO, cmdline, _MAIN_CMDLINE_MAX_LENGTH);
+
+		struct LexTok *stream = lex_produce_stream(cmdline, cmdlinelen);
 	}
 }
 
-int main (int argc, char **argv)
+int main (void)
 {
 	_main_setup();
 	_main_repl();
