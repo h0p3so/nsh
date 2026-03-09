@@ -39,6 +39,10 @@ const struct LexTok* lex_produce_stream (const char *cmdline, const size_t cmdli
 	return stream;
 }
 
+void lex_free_stream (const struct LexTok *stream)
+{
+	stdv_free(stream);
+}
 
 static struct LexTok _lex_get_word (const char *cmdline, size_t *offset)
 {
@@ -54,7 +58,7 @@ static struct LexTok _lex_get_word (const char *cmdline, size_t *offset)
 		*offset += 1;
 	}
 
-	printf("word found: %.*s\n", (int) tok.length, tok.source);
+	// printf("word found: %.*s\n", (int) tok.length, tok.source);
 	*offset -= 1;
 	return tok;
 }
