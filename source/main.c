@@ -1,6 +1,7 @@
 #include "shared/comm.h"
 #include "parser.h"
 #include "lex.h"
+#include "req.h"
 
 #include <stdio.h>
 #include <unistd.h>
@@ -25,6 +26,11 @@ static void _main_repl (void)
 
 		const struct LexTok *stream = lex_produce_stream(cmdline, cmdlinelen);
 		const struct ParserTreeCmd *treeCmd = parse_produce_tree(stream);
+
+		const bool ok = req_process(treeCmd);
+		if (ok == false)
+		{
+		}
 
 		parse_free_tree(treeCmd);
 		lex_free_stream(stream);

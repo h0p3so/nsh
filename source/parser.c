@@ -19,8 +19,6 @@ const struct ParserTreeCmd *parse_produce_tree (const struct LexTok *stream)
 void parse_free_tree (const struct ParserTreeCmd *treeCmd)
 {
 	// TODO
-
-	printf("%s\n", treeCmd->commandRelated.head);
 }
 
 static struct ParserTreeCmd *_parse_create_node (const enum ParserTreeCmdType type)
@@ -46,10 +44,6 @@ static char* _parse_create_word (const char *word, const size_t length)
 	return mot;
 }
 
-/*
- * command: word | command | eol
- * eol    :
- */
 static struct ParserTreeCmd* _parse_parse_command (const struct LexTok *stream, const size_t offset)
 {
 	struct ParserTreeCmd *node = _parse_create_node(PARSER_TREE_CMD_TYPE_COMMAND);
@@ -64,7 +58,7 @@ static struct ParserTreeCmd* _parse_parse_command (const struct LexTok *stream, 
 	);
 
 	node->commandRelated.argv = stdv_create(
-		sizeof(node->commandRelated.argv),
+		sizeof(*node->commandRelated.argv),
 		STDV_STD_INIT_CAP
 	);
 	NSH_SHARED_CHECKPTR(node->commandRelated.argv, _PARSER_STAGE_NAME, "creating argv for current command");
