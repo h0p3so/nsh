@@ -5,4 +5,11 @@
 
 void builtin_exit_cmd_run (const struct ParserTreeCmd*);
 
+static const struct BuiltInCmd GLOB_BUILTIN_EXIT_CMD_META =
+{
+	.name = "exit",
+	.help = "exits the shell",
+	.run = builtin_exit_cmd_run
+};
+
 #endif
