@@ -8,6 +8,16 @@
 
 #define _MAIN_CMDLINE_MAX_LENGTH 1024
 
+static void _main_setup (void);
+static void _main_repl (void);
+
+int main (void)
+{
+	_main_setup();
+	_main_repl();
+	return 0;
+}
+
 static void _main_setup (void)
 {
 	setbuf(stdout, NULL);
@@ -30,18 +40,11 @@ static void _main_repl (void)
 		const bool ok = req_process(treeCmd);
 		if (ok == false)
 		{
+			const struct LexTok head = *stream;
+			printf("%.*s: command not found\n", (uint32_t) head.length, head.source);
 		}
 
 		parse_free_tree(treeCmd);
 		lex_free_stream(stream);
 	}
 }
-
-int main (void)
-{
-	_main_setup();
-	_main_repl();
-	return 0;
-}
-
-
