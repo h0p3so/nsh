@@ -1,11 +1,13 @@
 #include "builtin.h"
+
 #include "builtin/exit.h"
 #include "builtin/echo.h"
+#include "builtin/type.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#define _BUILTIN_COUNT 2
+#define _BUILTIN_COUNT 3
 
 static const struct BuiltInCmd *_builtin_get_all (void);
 static int32_t _builtin_sort (const void*, const void*);
@@ -28,6 +30,7 @@ static const struct BuiltInCmd *_builtin_get_all (void)
 	static struct BuiltInCmd cmds[_BUILTIN_COUNT] = {
 		GLOB_BUILTIN_EXIT_CMD_META,
 		GLOB_BUILTIN_ECHO_CMD_META,
+		GLOB_BUILTIN_TYPE_CMD_META,
 	};
 
 	if (!set)
