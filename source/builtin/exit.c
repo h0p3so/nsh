@@ -14,8 +14,6 @@ static int32_t _exit_get_argument (const struct ParserTreeCmd*);
 void builtin_exit_cmd_run (const struct ParserTreeCmd *treeCmd)
 {
 	int32_t status = _exit_get_argument(treeCmd);
-
-	printf("exiting with %d status. Goodbye..\n", status);
 	exit(status % _EXIT_MOD);
 }
 
