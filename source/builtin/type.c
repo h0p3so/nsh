@@ -10,7 +10,7 @@ void builtin_type_cmd_run (const struct ParserTreeCmd *treeCmd)
 	if (stdv_size(treeCmd->commandRelated.argv) == 0)
 	{ return; }
 
-	const char *cmdname = stdv_get(treeCmd->commandRelated.argv, 0);
+	const char *cmdname = stdv_get(treeCmd->commandRelated.argv, 1);
 	const struct BuiltInCmd *isbuiltin = builtin_get(cmdname);
 
 	if (isbuiltin)
