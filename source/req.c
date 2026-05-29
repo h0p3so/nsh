@@ -29,15 +29,16 @@
 
 #include "req.h"
 #include "builtin.h"
+#include "ext.h"
 
 static bool _req_is_builtin (const struct ParserTreeCmd*);
+static bool _req_is_external (const struct ParserTreeCmd*);
 
 bool req_process (const struct ParserTreeCmd *treeCmd)
 {
 	if (treeCmd->type == PARSER_TREE_CMD_TYPE_COMMAND)
-	{
-		return _req_is_builtin(treeCmd);
-	}
+	{ return _req_is_builtin(treeCmd) || _req_is_external(treeCmd); }
+
 	return false;
 }
 
@@ -51,5 +52,18 @@ static bool _req_is_builtin (const struct ParserTreeCmd *treeCmd)
 	{ return false; }
 
 	builtin->run(treeCmd);
+	return true;
+}
+
+static bool _req_is_external (const struct ParserTreeCmd *treeCmd)
+{
+	const char *cmdName = treeCmd->commandRelated.head;
+	ext_path_t path = {0};
+
+	const bool isit = ext_is_command_external(cmdName, &path);
+	if (isit == false)
+	{ return false; }
+
+	ext_run_external(path, treeCmd);
 	return true;
 }
