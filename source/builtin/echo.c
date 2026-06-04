@@ -1,3 +1,10 @@
+/*
+ * echo built-in
+ *
+ * Prints its arguments to stdout, separated by
+ * spaces, with a trailing newline.
+ */
+
 #include "echo.h"
 #include "comm.h"
 #include "libs/stdv.h"

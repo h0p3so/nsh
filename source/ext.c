@@ -1,3 +1,10 @@
+/*
+ * external commands
+ *
+ * Searches the PATH for executables, verifies them
+ * with stat, and runs them via fork and execve.
+ */
+
 #include "ext.h"
 
 #include <stdio.h>

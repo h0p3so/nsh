@@ -1,3 +1,10 @@
+/*
+ * exit built-in
+ *
+ * Exits the shell with an optional status code.
+ * If no argument is given, exits with 0.
+ */
+
 #ifndef NSH_BUILTIN_EXIT_H
 #define NSH_BUILTIN_EXIT_H
 

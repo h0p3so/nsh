@@ -1,3 +1,10 @@
+/*
+ * type built-in
+ *
+ * Reports whether a command is a built-in or an
+ * external executable, and where it is found.
+ */
+
 #ifndef NSH_BUILTIN_TYPE_H
 #define NSH_BUILTIN_TYPE_H
 

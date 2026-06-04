@@ -1,3 +1,10 @@
+/*
+ * built-in command types
+ *
+ * Defines the struct and function pointer type used
+ * to register and call built-in commands.
+ */
+
 #ifndef NSH_SHARED_BUILTIN_TYPES_H
 #define NSH_SHARED_BUILTIN_TYPES_H
 

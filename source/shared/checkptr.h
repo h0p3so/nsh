@@ -1,3 +1,10 @@
+/*
+ * pointer check
+ *
+ * Macro that prints an error and aborts if a
+ * pointer is NULL. Used for fatal allocation checks.
+ */
+
 #ifndef NSH_SHARED_CHECKPTR_H
 #define NSH_SHARED_CHECKPTR_H
 
@@ -6,9 +13,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define NSH_SHARED_CHECKPTR(p, s, m) do {          \
-	if (p) { break; }                          \
-	fprintf(                                   \
+#define NSH_SHARED_CHECKPTR(p, s, m) do {  \
+	if (p) { break; }                      \
+	fprintf(                               \
 		stderr,                            \
 		"%s:%s (%s:%d): failed at `%s`\n", \
 		NSH_SHARED_META_NAME,              \
@@ -16,8 +23,8 @@
 		__FILE__,                          \
 		__LINE__,                          \
 		m                                  \
-	);                                         \
-	abort();                                   \
+	);                                     \
+	abort();                               \
 } while (0)
 
 #endif
