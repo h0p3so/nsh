@@ -19,14 +19,29 @@ static char* _parse_create_word (const char*, const size_t);
 
 static struct ParserTreeCmd* _parse_parse_command (const struct LexTok*, const size_t);
 
-const struct ParserTreeCmd *parse_produce_tree (const struct LexTok *stream)
+struct ParserTreeCmd *parse_produce_tree (const struct LexTok *stream)
 {
 	return _parse_parse_command(stream, 0);
 }
 
-void parse_free_tree (const struct ParserTreeCmd *treeCmd)
+void* parse_free_tree (struct ParserTreeCmd *treeCmd)
 {
-	// TODO
+	if (treeCmd->lhs) treeCmd->lhs = parse_free_tree(treeCmd->lhs);
+	if (treeCmd->rhs) treeCmd->rhs = parse_free_tree(treeCmd->rhs);
+
+	if (treeCmd->type == PARSER_TREE_CMD_TYPE_COMMAND)
+	{
+		// XXX: try to make head to point to the agrv[0]
+
+		free(treeCmd->commandRelated.head);
+
+		for (size_t i = 0; i < stdv_size(treeCmd->commandRelated.argv); i++)
+		{ stdv_pop_and_free(treeCmd->commandRelated.argv); }
+		stdv_free(treeCmd->commandRelated.argv);
+	}
+
+	free(treeCmd);
+	return NULL;
 }
 
 static struct ParserTreeCmd *_parse_create_node (const enum ParserTreeCmdType type)
@@ -65,7 +80,7 @@ static struct ParserTreeCmd* _parse_parse_command (const struct LexTok *stream, 
 		stdv_get(stream, offset).length
 	);
 
-	node->commandRelated.argv = stdv_create(
+	node->commandRelated.argv = (char**) stdv_create(
 		sizeof(*node->commandRelated.argv),
 		STDV_STD_INIT_CAP
 	);

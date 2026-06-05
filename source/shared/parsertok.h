@@ -31,6 +31,9 @@ struct ParserTreeCmd
 	 */
 	struct
 	{
+		/* head field points to the first element within argv, therfore
+		 * it shall not be freeded
+		 */
 		char *head;
 		char **argv;
 	} commandRelated;

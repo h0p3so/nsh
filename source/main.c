@@ -42,7 +42,7 @@ static void _main_repl (void)
 		{ continue; }
 
 		const struct LexTok *stream = lex_produce_stream(cmdline, cmdlinelen);
-		const struct ParserTreeCmd *treeCmd = parse_produce_tree(stream);
+		struct ParserTreeCmd *treeCmd = parse_produce_tree(stream);
 
 		const bool ok = req_process(treeCmd);
 		if (ok == false)
@@ -51,7 +51,7 @@ static void _main_repl (void)
 			printf("%.*s: command not found\n", (uint32_t) head.length, head.source);
 		}
 
-		parse_free_tree(treeCmd);
 		lex_free_stream(stream);
+		treeCmd = parse_free_tree(treeCmd);
 	}
 }
