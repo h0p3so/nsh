@@ -31,10 +31,6 @@ void* parse_free_tree (struct ParserTreeCmd *treeCmd)
 
 	if (treeCmd->type == PARSER_TREE_CMD_TYPE_COMMAND)
 	{
-		// XXX: try to make head to point to the agrv[0]
-
-		free(treeCmd->commandRelated.head);
-
 		for (size_t i = 0; i < stdv_size(treeCmd->commandRelated.argv); i++)
 		{ stdv_pop_and_free(treeCmd->commandRelated.argv); }
 		stdv_free(treeCmd->commandRelated.argv);
@@ -72,14 +68,6 @@ static struct ParserTreeCmd* _parse_parse_command (const struct LexTok *stream, 
 	struct ParserTreeCmd *node = _parse_create_node(PARSER_TREE_CMD_TYPE_COMMAND);
 	const size_t lim = stdv_size(stream);
 
-	/* creates the word at `offset` position within the `stream` stream
-	 * as a PARSER_TREE_CMD_TYPE_COMMAND node
-	 */
-	node->commandRelated.head = _parse_create_word(
-		stdv_get(stream, offset).source,
-		stdv_get(stream, offset).length
-	);
-
 	node->commandRelated.argv = (char**) stdv_create(
 		sizeof(*node->commandRelated.argv),
 		STDV_STD_INIT_CAP
@@ -103,6 +91,8 @@ static struct ParserTreeCmd* _parse_parse_command (const struct LexTok *stream, 
 			);
 		}
 	}
+
+	node->commandRelated.head = stdv_get(node->commandRelated.argv, 0);
 	return node;
 }
 
