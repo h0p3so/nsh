@@ -6,6 +6,7 @@
  */
 
 #include "ext.h"
+#include "err.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -16,6 +17,8 @@
 
 #define _EXT_MAX_PATHS 32
 #define _EXT_ENVPATH_DELIMITERS ":;"
+
+#define _EXT_STAGE_NAME "external"
 
 struct Path
 {
@@ -112,20 +115,17 @@ void ext_run_external (const ext_path_t path, const struct ParserTreeCmd *treeCm
 	pid_t childpid = fork();
 
 	if (childpid == -1)
-	{ /* TODO */ }
+	{ err_fatal(_EXT_STAGE_NAME, "trying to fork current process"); }
 
 	if (childpid == 0)
-	{
-		execve(path, treeCmd->commandRelated.argv, NULL);
-	}
+	{ execve(path, treeCmd->commandRelated.argv, NULL); }
 	else
 	{
 		static const int32_t anychild = -1;
 		int32_t wstatus;
 
-		do {
-			(void) waitpid(anychild, &wstatus, WUNTRACED);
-		} while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus));
+		do { (void) waitpid(anychild, &wstatus, WUNTRACED); }
+		while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus));
 	}
 }
 
