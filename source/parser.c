@@ -6,9 +6,9 @@
  * and argument list.
  */
 
+#include "err.h"
 #include "parser.h"
 #include "libs/stdv.h"
-#include "shared/checkptr.h"
 
 #include <stdlib.h>
 
@@ -43,7 +43,7 @@ void* parse_free_tree (struct ParserTreeCmd *treeCmd)
 static struct ParserTreeCmd *_parse_create_node (const enum ParserTreeCmdType type)
 {
 	struct ParserTreeCmd *node = calloc(1, sizeof(struct ParserTreeCmd));
-	NSH_SHARED_CHECKPTR(node, _PARSER_STAGE_NAME, "creating a new node");
+	NSH_ERR_CHECKPTR(node, _PARSER_STAGE_NAME, "creating a new node");
 
 	node->lhs  = NULL;
 	node->rhs  = NULL;
@@ -57,7 +57,7 @@ static char* _parse_create_word (const char *word, const size_t length)
 	static const size_t plusNullByte = 1;
 
 	char *mot = calloc(length + plusNullByte, sizeof(char));
-	NSH_SHARED_CHECKPTR(mot, _PARSER_STAGE_NAME, "creating a new word");
+	NSH_ERR_CHECKPTR(mot, _PARSER_STAGE_NAME, "creating a new word");
 
 	memcpy(mot, word, length);
 	return mot;
@@ -72,7 +72,7 @@ static struct ParserTreeCmd* _parse_parse_command (const struct LexTok *stream, 
 		sizeof(*node->commandRelated.argv),
 		STDV_STD_INIT_CAP
 	);
-	NSH_SHARED_CHECKPTR(node->commandRelated.argv, _PARSER_STAGE_NAME, "creating argv for current command");
+	NSH_ERR_CHECKPTR(node->commandRelated.argv, _PARSER_STAGE_NAME, "creating argv for current command");
 
 	/* whatever comes next that is a word will be interpreted as an
 	 * argv to the current command (node) including the `head`

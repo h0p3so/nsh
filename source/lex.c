@@ -8,7 +8,7 @@
  */
 
 #include "lex.h"
-#include "shared/checkptr.h"
+#include "err.h"
 #include "libs/stdv.h"
 
 #include <ctype.h>
@@ -26,7 +26,7 @@ const struct LexTok* lex_produce_stream (const char *cmdline, const size_t cmdli
 	};
 
 	struct LexTok *stream = (struct LexTok*) stdv_create(sizeof(struct LexTok), STDV_STD_INIT_CAP);
-	NSH_SHARED_CHECKPTR(stream, _LEX_STAGE_NAME, "allocating space for tokens stream");
+	NSH_ERR_CHECKPTR(stream, _LEX_STAGE_NAME, "allocating space for tokens stream");
 
 	bool EOLset = false;
 	for (size_t i = 0; i < cmdlinelen; i++)
