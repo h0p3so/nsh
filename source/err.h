@@ -1,3 +1,10 @@
+/*
+ * error handling
+ *
+ * Fatal error reporting with errno support.
+ * Prints a descriptive message and aborts.
+ */
+
 #ifndef NHS_ERR_H
 #define NHS_ERR_H
 
