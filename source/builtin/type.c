@@ -1,3 +1,10 @@
+/*
+ * type built-in
+ *
+ * Reports whether a command is a built-in or an
+ * external executable, and where it is found.
+ */
+
 #include "type.h"
 #include "comm.h"
 #include "../builtin.h"

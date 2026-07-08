@@ -1,5 +1,14 @@
+/*
+ * lexer
+ *
+ * Tokenizes a raw command-line string into a stream of
+ * tokens: words, pipes, end-of-line markers etc. Tokens
+ * do not own their data - they point into the caller's
+ * buffer.
+ */
+
 #include "lex.h"
-#include "shared/checkptr.h"
+#include "err.h"
 #include "libs/stdv.h"
 
 #include <ctype.h>
@@ -16,8 +25,8 @@ const struct LexTok* lex_produce_stream (const char *cmdline, const size_t cmdli
 		.type   = LEX_TOK_TYPE_EOL
 	};
 
-	struct LexTok *stream = stdv_create(sizeof(struct LexTok), STDV_STD_INIT_CAP);
-	NSH_SHARED_CHECKPTR(stream, _LEX_STAGE_NAME, "allocating space for token stream");
+	struct LexTok *stream = (struct LexTok*) stdv_create(sizeof(struct LexTok), STDV_STD_INIT_CAP);
+	NSH_ERR_CHECKPTR(stream, _LEX_STAGE_NAME, "allocating space for tokens stream");
 
 	bool EOLset = false;
 	for (size_t i = 0; i < cmdlinelen; i++)

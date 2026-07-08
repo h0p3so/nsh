@@ -1,3 +1,10 @@
+/*
+ * built-in commands registry
+ *
+ * Stores all built-in commands in a sorted array
+ * and looks them up by name with bsearch.
+ */
+
 #include "builtin.h"
 
 #include "builtin/exit.h"
