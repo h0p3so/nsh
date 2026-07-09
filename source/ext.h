@@ -9,11 +9,9 @@
 #define NSH_EXT_H
 
 #include "shared/parsertok.h"
+#include "shared/pathmax.h"
 
-#define NSH_EXT_PATH_MAX 4096
-#define NSH_EXT_NAME_MAX  256
-
-typedef char ext_path_t[NSH_EXT_PATH_MAX + NSH_EXT_NAME_MAX];
+typedef char ext_path_t[NSH_SHARED_PATHMAX_PATH_MAX + NSH_SHARED_PATHMAX_NAME_MAX];
 
 bool ext_is_command_external (const char*, ext_path_t*);
 void ext_run_external (const ext_path_t, const struct ParserTreeCmd*);
