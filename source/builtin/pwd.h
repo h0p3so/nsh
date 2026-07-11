@@ -5,6 +5,7 @@
 
 void builtin_pwd_set_origin (void);
 void builtin_pwd_cmd_run (const struct ParserTreeCmd*);
+void builtin_pwd_go_home (void);
 void builtin_pwd_clean (void);
 
 static const struct BuiltInCmd GLOB_BUILTIN_PWD_CMD_META =
