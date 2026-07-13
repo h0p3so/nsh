@@ -23,8 +23,17 @@ void builtin_pwd_set_origin (void)
 	{ return; }
 
 	_builtin_pwd_cwd = calloc(NSH_SHARED_PATHMAX_PATH_MAX, sizeof(char));
-	NSH_ERR_CHECKPTR(_builtin_pwd_cwd, _BUILTIN_PWD_STAGE_NAME, "allocating space for PWD var");
+	NSH_ERR_CHECKPTR(_builtin_pwd_cwd, _BUILTIN_PWD_STAGE_NAME, "allocating space for CWD var");
 
+	const char *envv = getenv("PWD");
+	if (envv)
+	{ strncpy(_builtin_pwd_cwd, envv, NSH_SHARED_PATHMAX_PATH_MAX); return; }
+
+	const char *ret = getcwd(_builtin_pwd_cwd, NSH_SHARED_PATHMAX_PATH_MAX);
+
+	if (ret == NULL)
+	{ err_fatal(_BUILTIN_PWD_STAGE_NAME, "trying to get the current working directory"); }
+	set = true;
 }
 
 void builtin_pwd_cmd_run (const struct ParserTreeCmd *treeCmd)
@@ -45,6 +54,10 @@ void builtin_pwd_clean (void)
 	{ return; }
 
 	free(_builtin_pwd_cwd);
+}
+
+void builtin_pwd_set_path_to (const char *newpath)
+{
 }
 
 static const char *_builtin_pwd_get_home (void)
