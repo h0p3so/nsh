@@ -4,35 +4,72 @@
 #include "cd.h"
 
 #include <string.h>
+#include <unistd.h>
 
 #define _BUILTIN_CD_HOME_ALIAS '~'
 
-// this file only process the argument given to `cd` command, the
-// file that actually changes the directory is `pwd`
-
 static void _builtin_cd_home_alias_used (const char*);
+static void _builtin_cd_perform (const char*);
 
 void builtin_cd_cmd_run (const struct ParserTreeCmd *treeCmd)
 {
 	if (stdv_size(treeCmd->commandRelated.argv) == NSH_BUILTIN_COMM_ARG_OFF)
-	{ builtin_pwd_go_home(); return; }
+	{
+		_builtin_cd_perform(
+			builtin_pwd_get_home()
+		);
+		return;
+	}
 
 	const char *arg = stdv_get(treeCmd->commandRelated.argv, NSH_BUILTIN_COMM_ARG_OFF);
 
 	if (*arg == _BUILTIN_CD_HOME_ALIAS)
-	{ _builtin_cd_home_alias_used(arg); return; }
+	{ _builtin_cd_home_alias_used(arg); }
+	else
+	{ builtin_pwd_aux_add(arg, strlen(arg)); builtin_pwd_aux_complete(); }
 
 
 	// TODO: oldpwd
+
+	_builtin_cd_perform(
+		builtin_pwd_get_cwd()
+	);
 }
 
 static void _builtin_cd_home_alias_used (const char *arg)
 {
 	const size_t arglen = strlen(arg);
-	if (arglen == 1)
-	{ builtin_pwd_go_home(); return; }
 
-	for (size_t i = 0; i < arglen; i++)
+	/* this handles the single `~`, so it gets
+	 * replaced by $HOME value whatever it is
+	 */
+	const char *homepath = builtin_pwd_get_home();
+	const size_t length = strlen(homepath);
+	builtin_pwd_aux_add(homepath, length);
+
+	/* in case the argument is either:
+	 * ~
+	 * or
+	 * ~/
+	 */
+	if (arglen == 1 || arglen == 2)
 	{
+		builtin_pwd_aux_complete();
+		return;
 	}
+
+	size_t rawfrom = 2, rawto;
+	for (rawto = rawfrom; rawto < arglen; rawto++)
+	{
+		if (arg[rawto] != '$')
+		{ /* TODO */ }
+	}
+	
+	builtin_pwd_aux_add(arg + rawfrom - 1, rawto - rawfrom + 1);
+	builtin_pwd_aux_complete();
+}
+
+static void _builtin_cd_perform (const char *resolvedpath)
+{
+	chdir(resolvedpath); // TODO handle
 }
