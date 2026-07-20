@@ -14,11 +14,18 @@
 
 struct IntCwd
 {
-	char *path; // XXX do not use heap
+	char path[NSH_SHARED_PATHMAX_PATH_MAX];
 	size_t length;
 };
 
+/* this IntCwd contains the full path of the current working directory, in other
+ * words it is $PWD
+ */
 static struct IntCwd _builtin_pwd_cwd = {0};
+
+/* this IntCwd acts as a relative path builder which is used when the `cd` command
+ * is parsing a new path
+ */
 static struct IntCwd _builtin_pwd_aux_cwd = {0};
 
 void builtin_pwd_set_origin (void)
@@ -27,27 +34,31 @@ void builtin_pwd_set_origin (void)
 	if (set)
 	{ return; }
 
-	_builtin_pwd_cwd.path = calloc(NSH_SHARED_PATHMAX_PATH_MAX, sizeof(char));
+	memset(_builtin_pwd_cwd.path, 0, NSH_SHARED_PATHMAX_PATH_MAX);
 	_builtin_pwd_cwd.length = 0;
-	NSH_ERR_CHECKPTR(_builtin_pwd_cwd.path, _BUILTIN_PWD_STAGE_NAME, "allocating space for CWD var");
 
-	_builtin_pwd_aux_cwd.path = calloc(NSH_SHARED_PATHMAX_PATH_MAX, sizeof(char));
+	memset(_builtin_pwd_aux_cwd.path, 0, NSH_SHARED_PATHMAX_PATH_MAX);
 	_builtin_pwd_aux_cwd.length = 0;
-	NSH_ERR_CHECKPTR(_builtin_pwd_aux_cwd.path, _BUILTIN_PWD_STAGE_NAME, "allocating space for aux CWD var");
 
 	const char *envv = getenv("PWD");
 	if (envv)
-	{ strncpy(_builtin_pwd_cwd.path, envv, NSH_SHARED_PATHMAX_PATH_MAX); return; }
+	{
+		strncpy(_builtin_pwd_cwd.path, envv, NSH_SHARED_PATHMAX_PATH_MAX);
+		set = true;
+		return;
+	}
 
 	const char *ret = getcwd(_builtin_pwd_cwd.path, NSH_SHARED_PATHMAX_PATH_MAX);
-
 	if (ret == NULL)
 	{ err_fatal(_BUILTIN_PWD_STAGE_NAME, "trying to get the current working directory"); }
+
 	set = true;
 }
 
 const char *builtin_pwd_get_home (void)
 {
+	return  getenv("HOME");
+
 	static char home[NSH_SHARED_PATHMAX_PATH_MAX] = {0};
 	static bool set = false;
 
@@ -74,8 +85,6 @@ void builtin_pwd_aux_add (const char *portion, const size_t length)
 		"%s",
 		portion
 	);
-
-	printf("rn: %s\n", _builtin_pwd_aux_cwd.path);
 	_builtin_pwd_aux_cwd.length += length;
 }
 
@@ -99,15 +108,6 @@ const char *builtin_pwd_get_cwd (void)
 void builtin_pwd_cmd_run (const struct ParserTreeCmd *treeCmd)
 {
 	(void) treeCmd;
-	printf("%s\n", _builtin_pwd_cwd.path);
-}
-
-void builtin_pwd_clean (void) // XXX remove this
-{
-	if (_builtin_pwd_cwd.path)
-	{ free(_builtin_pwd_cwd.path); }
-
-	if (_builtin_pwd_aux_cwd.path)
-	{ free(_builtin_pwd_aux_cwd.path); }
+	printf("%s\n", getcwd(NULL, 0));
 }
 
