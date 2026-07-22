@@ -1,7 +1,7 @@
 #include "post.h"
 #include "builtin.h"
 
-bool post_is_builtin (const struct LexToken *head)
+bool post_is_builtin (const struct LexToken *stream)
 {
 	const struct BuiltInCmd *cmd = builtin_get(head->source, head->length);
 
@@ -12,7 +12,7 @@ bool post_is_builtin (const struct LexToken *head)
 	return true;
 }
 
-bool post_is_external (const struct LexToken *head)
+bool post_is_external (const struct LexToken *stream)
 {
 	return false;
 }
