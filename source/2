@@ -1,0 +1,20 @@
+#include "exit.h"
+
+#define NSH_BUILTIN_EXIT_CMD ((struct BuiltInCmd) { \
+		.name   = "exit",                \
+		.help   = "exists the program",  \
+		.length = 4,                     \
+		.run    = exit_builtin_run       \
+	})
+
+#include <stdlib.h>
+
+void exit_builtin_run (const struct LexToken *head, const struct LexToken *body)
+{
+	exit(0);
+}
+
+struct BuiltInCmd exit_builtin_get (void)
+{
+	return cmd;
+}
