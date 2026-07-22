@@ -51,4 +51,5 @@ static bool _req_is_builtin (const struct ParserTreeCmd *treeCmd)
 	{ return false; }
 
 	builtin->run(treeCmd);
+	return true;
 }
