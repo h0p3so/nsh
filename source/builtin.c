@@ -11,28 +11,26 @@ static int32_t _builtin_sort (const void*, const void*);
 
 const struct BuiltInCmd *builtin_get (const char *cmdname)
 {
-	static const size_t builtinCmdSz = sizeof(struct BuiltInCmd);
 	const struct BuiltInCmd *cmds = _builtin_get_all();
 
 	struct BuiltInCmd key =
 	{ .name = cmdname };
 
 	return (struct BuiltInCmd*) bsearch(
-		&key, cmds, _BUILTIN_COUNT, builtinCmdSz, _builtin_sort
+		&key, cmds, _BUILTIN_COUNT, sizeof(cmds[0]), _builtin_sort
 	);
 }
 
 static const struct BuiltInCmd *_builtin_get_all (void)
 {
 	static bool set = false;
-	static const size_t builtinCmdSz = sizeof(struct BuiltInCmd);
 	static struct BuiltInCmd cmds[_BUILTIN_COUNT] = {
-		{ .name = "exit", .help = "", .run  = builtin_exit_cmd_run }
+		GLOB_BUILTIN_EXIT_CMD_META,
 	};
 
 	if (!set)
 	{
-		qsort(cmds, _BUILTIN_COUNT, builtinCmdSz, _builtin_sort);
+		qsort(cmds, _BUILTIN_COUNT, sizeof(cmds[0]), _builtin_sort);
 		set = true;
 	}
 	return cmds;
