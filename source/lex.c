@@ -38,7 +38,7 @@ const struct LexTok* lex_produce_stream (const char *cmdline, const size_t cmdli
 		if (isspace(a))
 		{ continue; }
 
-		if (isalnum(a))
+		if (isalnum(a) || a == '_' || a == '-' || a == '.' || a == '~' || a == '/') // TODO improve this shit
 		{ stdv_put(stream, _lex_get_word(cmdline, &i)); }
 	}
 
@@ -62,7 +62,7 @@ static struct LexTok _lex_get_word (const char *cmdline, size_t *offset)
 	};
 
 	char a = tok.source[tok.length];
-	while (isalnum(a) || a == '_' || a == '-' || a == '.')
+	while (isalnum(a) || a == '_' || a == '-' || a == '.' || a == '~' || a == '/')
 	{
 		tok.length++;
 		*offset += 1;

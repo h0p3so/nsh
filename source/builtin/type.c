@@ -15,7 +15,7 @@
 
 void builtin_type_cmd_run (const struct ParserTreeCmd *treeCmd)
 {
-	if (stdv_size(treeCmd->commandRelated.argv) == 0)
+	if (stdv_size(treeCmd->commandRelated.argv) == NSH_BUILTIN_COMM_ARG_OFF)
 	{ return; }
 
 	const char *cmdname = stdv_get(treeCmd->commandRelated.argv, NSH_BUILTIN_COMM_ARG_OFF);
