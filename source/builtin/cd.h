@@ -1,3 +1,10 @@
+/*
+ * cd built-in
+ *
+ * Changes the current directory. Supports ~ as an
+ * alias for the user's home directory.
+ */
+
 #ifndef NSH_BUILTIN_CD_H
 #define NSH_BUILTIN_CD_H
 

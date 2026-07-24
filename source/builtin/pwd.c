@@ -1,7 +1,15 @@
+/*
+ * pwd built-in
+ *
+ * Tracks the current working directory and provides
+ * helpers for cd to build paths incrementally.
+ */
+
 #include "pwd.h"
 #include "../err.h"
 #include "../shared/pathmax.h"
 
+#include <errno.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -11,6 +19,9 @@
 #include <pwd.h>
 
 #define _BUILTIN_PWD_STAGE_NAME "builtin-pwd"
+
+#define _BUILTIN_PWD_ABS_PATH_SPECIFIER '/'
+#define _BUILTIN_PWD_REL_PATH_SPECIFIER '.'
 
 struct IntCwd
 {
@@ -27,6 +38,8 @@ static struct IntCwd _builtin_pwd_cwd = {0};
  * is parsing a new path
  */
 static struct IntCwd _builtin_pwd_aux_cwd = {0};
+
+static void _builtin_pwd_suregy (void);
 
 void builtin_pwd_set_origin (void)
 {
@@ -55,10 +68,9 @@ void builtin_pwd_set_origin (void)
 	set = true;
 }
 
+// TODO try to get it via $HOME
 const char *builtin_pwd_get_home (void)
 {
-	return  getenv("HOME");
-
 	static char home[NSH_SHARED_PATHMAX_PATH_MAX] = {0};
 	static bool set = false;
 
@@ -77,7 +89,10 @@ const char *builtin_pwd_get_home (void)
 void builtin_pwd_aux_add (const char *portion, const size_t length)
 {
 	if (_builtin_pwd_aux_cwd.length + length >= NSH_SHARED_PATHMAX_PATH_MAX)
-	{ /* TODO */ }
+	{
+		errno = ENAMETOOLONG;
+		err_fatal(_BUILTIN_PWD_STAGE_NAME, "accessing an indicated path");
+	}
 
 	snprintf(
 		_builtin_pwd_aux_cwd.path + _builtin_pwd_aux_cwd.length,
@@ -90,12 +105,7 @@ void builtin_pwd_aux_add (const char *portion, const size_t length)
 
 void builtin_pwd_aux_complete (void)
 {
-	strncpy(
-		_builtin_pwd_cwd.path,
-		_builtin_pwd_aux_cwd.path,
-		NSH_SHARED_PATHMAX_PATH_MAX
-	);
-
+	_builtin_pwd_suregy();
 	memset(_builtin_pwd_aux_cwd.path, 0, _builtin_pwd_aux_cwd.length);
 	_builtin_pwd_aux_cwd.length = 0;
 }
@@ -108,6 +118,72 @@ const char *builtin_pwd_get_cwd (void)
 void builtin_pwd_cmd_run (const struct ParserTreeCmd *treeCmd)
 {
 	(void) treeCmd;
-	printf("%s\n", getcwd(NULL, 0));
+	printf("%s\n", _builtin_pwd_cwd.path);
 }
 
+static void _builtin_pwd_suregy (void)
+{
+	struct IntCwd final = {0};
+
+	if (_builtin_pwd_aux_cwd.path[0] == '/')
+	{
+		final.path[0] = '/';
+		final.length++;
+	}
+
+	const size_t lim = _builtin_pwd_aux_cwd.length;
+	/* when the command gets to this function, the whole _builtin_pwd_aux_cwd.path
+	 * will be made of valid characters accepted by the lexer, no variables no aliases
+	 * only real paths
+	 */
+	for (size_t i = 0; i < lim; i++)
+	{
+		const bool theresroom = ((i + 1) < lim);
+
+		if (_builtin_pwd_aux_cwd.path[i] == '.' && theresroom && _builtin_pwd_aux_cwd.path[i + 1] == '/')
+		{ i++; continue; }
+
+		const size_t starting = i;
+		while (_builtin_pwd_aux_cwd.path[i] != '/' && i < lim) i++;
+
+		const size_t dirnamelen = i - starting;
+		const size_t dirnamelenWithSlash = dirnamelen + 1;
+
+		if (dirnamelen == 0)
+		{ continue; }
+
+		const char *dirname = _builtin_pwd_aux_cwd.path + starting;
+		if (dirnamelen == 2 && dirname[0] == '.' && dirname[1] == '.' && final.length >= 2)
+		{
+			/* skips the null byte terminator and the last slash added */
+			final.length -= 2;
+
+			while (final.length > 0 && final.path[final.length--] != '/')
+				;;
+
+			final.path[++final.length] = '/';
+			final.path[++final.length] = '\0';
+
+			continue;
+		}
+
+		strncpy(
+			final.path + final.length,
+			dirname,
+			dirnamelenWithSlash
+		);
+		final.length += dirnamelenWithSlash;
+	}
+
+	if (final.path[final.length - 1] == '/')
+	{ final.path[--final.length] = '\0'; }
+
+	printf("final path: %s\n", final.path);
+
+	strncpy(
+		_builtin_pwd_cwd.path,
+		final.path,
+		NSH_SHARED_PATHMAX_PATH_MAX
+	);
+	_builtin_pwd_cwd.length = final.length;
+}

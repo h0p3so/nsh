@@ -1,3 +1,10 @@
+/*
+ * cd built-in
+ *
+ * Changes the current directory. Supports ~ as an
+ * alias for the user's home directory.
+ */
+
 #include "libs/stdv.h"
 #include "../err.h"
 #include "comm.h"
@@ -19,9 +26,7 @@ void builtin_cd_cmd_run (const struct ParserTreeCmd *treeCmd)
 {
 	if (stdv_size(treeCmd->commandRelated.argv) == NSH_BUILTIN_COMM_ARG_OFF)
 	{
-		_builtin_cd_perform(
-			builtin_pwd_get_home()
-		);
+		_builtin_cd_perform(builtin_pwd_get_home());
 		return;
 	}
 
@@ -32,8 +37,6 @@ void builtin_cd_cmd_run (const struct ParserTreeCmd *treeCmd)
 	else
 	{ builtin_pwd_aux_add(arg, strlen(arg)); builtin_pwd_aux_complete(); }
 
-
-	// TODO: oldpwd
 	_builtin_cd_perform(builtin_pwd_get_cwd());
 }
 
@@ -61,10 +64,7 @@ static void _builtin_cd_home_alias_used (const char *arg)
 
 	size_t rawfrom = 2, rawto;
 	for (rawto = rawfrom; rawto < arglen; rawto++)
-	{
-		if (arg[rawto] != '$')
-		{ /* TODO */ }
-	}
+		;;
 	
 	builtin_pwd_aux_add(arg + rawfrom - 1, rawto - rawfrom + 1);
 	builtin_pwd_aux_complete();
@@ -73,9 +73,7 @@ static void _builtin_cd_home_alias_used (const char *arg)
 static void _builtin_cd_perform (const char *resolvedpath)
 {
 	if (chdir(resolvedpath) == 0)
-	{
-		return;
-	}
+	{ return; }
 
 	switch (errno)
 	{
@@ -85,6 +83,5 @@ static void _builtin_cd_perform (const char *resolvedpath)
 			return;
 		}
 	}
-
-	err_fatal(_BUILTIN_CD_STAGE_NAME, "trying to invoke `chdir` syscall"); // TODO: imprive handling
+	err_fatal(_BUILTIN_CD_STAGE_NAME, "trying to invoke `chdir` syscall");
 }
