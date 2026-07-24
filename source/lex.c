@@ -52,13 +52,14 @@ static struct LexTok _lex_get_word (const char *cmdline, size_t *offset)
 		.length = 0
 	};
 
-	while (isalnum(tok.source[tok.length]))
+	char a = tok.source[tok.length];
+	while (isalnum(a) || a == '_' || a == '-')
 	{
 		tok.length++;
 		*offset += 1;
+		a = tok.source[tok.length];
 	}
 
-	// printf("word found: %.*s\n", (int) tok.length, tok.source);
 	*offset -= 1;
 	return tok;
 }
