@@ -12,7 +12,7 @@
 #include "shared/lextok.h"
 #include "shared/parsertok.h"
 
-const struct ParserTreeCmd *parse_produce_tree (const struct LexTok*);
-void parse_free_tree (const struct ParserTreeCmd*);
+struct ParserTreeCmd *parse_produce_tree (const struct LexTok*);
+void* parse_free_tree (struct ParserTreeCmd*);
 
 #endif
