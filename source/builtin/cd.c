@@ -1,12 +1,16 @@
 #include "libs/stdv.h"
+#include "../err.h"
 #include "comm.h"
 #include "pwd.h"
 #include "cd.h"
 
+#include <stdio.h>
+#include <errno.h>
 #include <string.h>
 #include <unistd.h>
 
 #define _BUILTIN_CD_HOME_ALIAS '~'
+#define _BUILTIN_CD_STAGE_NAME "builtin-cd"
 
 static void _builtin_cd_home_alias_used (const char*);
 static void _builtin_cd_perform (const char*);
@@ -30,10 +34,7 @@ void builtin_cd_cmd_run (const struct ParserTreeCmd *treeCmd)
 
 
 	// TODO: oldpwd
-
-	_builtin_cd_perform(
-		builtin_pwd_get_cwd()
-	);
+	_builtin_cd_perform(builtin_pwd_get_cwd());
 }
 
 static void _builtin_cd_home_alias_used (const char *arg)
@@ -71,5 +72,19 @@ static void _builtin_cd_home_alias_used (const char *arg)
 
 static void _builtin_cd_perform (const char *resolvedpath)
 {
-	chdir(resolvedpath); // TODO handle
+	if (chdir(resolvedpath) == 0)
+	{
+		return;
+	}
+
+	switch (errno)
+	{
+		case ENOENT:
+		{
+			printf("cd: %s: No such file or directory\n", resolvedpath);
+			return;
+		}
+	}
+
+	err_fatal(_BUILTIN_CD_STAGE_NAME, "trying to invoke `chdir` syscall"); // TODO: imprive handling
 }

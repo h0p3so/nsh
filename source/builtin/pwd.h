@@ -17,6 +17,4 @@ static const struct BuiltInCmd GLOB_BUILTIN_PWD_CMD_META =
 	.run = builtin_pwd_cmd_run
 };
 
-void builtin_pwd_clean (void);
-
 #endif
