@@ -12,7 +12,14 @@
 
 #define _BUILTIN_PWD_STAGE_NAME "builtin-pwd"
 
-static char* _builtin_pwd_cwd;
+struct IntCwd
+{
+	char *path; // XXX do not use heap
+	size_t length;
+};
+
+static struct IntCwd _builtin_pwd_cwd = {0};
+static struct IntCwd _builtin_pwd_aux_cwd = {0};
 
 static const char *_builtin_pwd_get_home (void);
 
@@ -22,14 +29,19 @@ void builtin_pwd_set_origin (void)
 	if (set)
 	{ return; }
 
-	_builtin_pwd_cwd = calloc(NSH_SHARED_PATHMAX_PATH_MAX, sizeof(char));
-	NSH_ERR_CHECKPTR(_builtin_pwd_cwd, _BUILTIN_PWD_STAGE_NAME, "allocating space for CWD var");
+	_builtin_pwd_cwd.path = calloc(NSH_SHARED_PATHMAX_PATH_MAX, sizeof(char));
+	_builtin_pwd_cwd.length = 0;
+	NSH_ERR_CHECKPTR(_builtin_pwd_cwd.path, _BUILTIN_PWD_STAGE_NAME, "allocating space for CWD var");
+
+	_builtin_pwd_aux_cwd.path = calloc(NSH_SHARED_PATHMAX_PATH_MAX, sizeof(char));
+	_builtin_pwd_aux_cwd.length = 0;
+	NSH_ERR_CHECKPTR(_builtin_pwd_aux_cwd.path, _BUILTIN_PWD_STAGE_NAME, "allocating space for aux CWD var");
 
 	const char *envv = getenv("PWD");
 	if (envv)
-	{ strncpy(_builtin_pwd_cwd, envv, NSH_SHARED_PATHMAX_PATH_MAX); return; }
+	{ strncpy(_builtin_pwd_cwd.path, envv, NSH_SHARED_PATHMAX_PATH_MAX); return; }
 
-	const char *ret = getcwd(_builtin_pwd_cwd, NSH_SHARED_PATHMAX_PATH_MAX);
+	const char *ret = getcwd(_builtin_pwd_cwd.path, NSH_SHARED_PATHMAX_PATH_MAX);
 
 	if (ret == NULL)
 	{ err_fatal(_BUILTIN_PWD_STAGE_NAME, "trying to get the current working directory"); }
@@ -39,41 +51,56 @@ void builtin_pwd_set_origin (void)
 void builtin_pwd_cmd_run (const struct ParserTreeCmd *treeCmd)
 {
 	(void) treeCmd;
-	printf("%s\n", _builtin_pwd_cwd);
+	printf("%s\n", _builtin_pwd_cwd.path);
 }
 
 void builtin_pwd_go_home (void)
 {
 	const char *homepath = _builtin_pwd_get_home();
-	chdir(homepath);
+	strncpy(	
+		_builtin_pwd_cwd.path,
+		homepath,
+		NSH_SHARED_PATHMAX_PATH_MAX
+	);
+	chdir(_builtin_pwd_cwd.path); // TODO use an internal function to call chdir instead
+}
+
+void builtin_pwd_aux_add (const char *portion, const size_t length)
+{
+	if (_builtin_pwd_aux_cwd.length + length >= NSH_SHARED_PATHMAX_PATH_MAX)
+	{ /* TODO */ }
+
+	snprintf(
+		_builtin_pwd_aux_cwd.path,
+		length + 1,
+		"%s/",
+		portion
+	);
+	_builtin_pwd_aux_cwd.length += length;
 }
 
 void builtin_pwd_clean (void)
 {
-	if (_builtin_pwd_cwd == NULL)
-	{ return; }
+	if (_builtin_pwd_cwd.path)
+	{ free(_builtin_pwd_cwd.path); }
 
-	free(_builtin_pwd_cwd);
-}
-
-void builtin_pwd_set_path_to (const char *newpath)
-{
+	if (_builtin_pwd_aux_cwd.path)
+	{ free(_builtin_pwd_aux_cwd.path); }
 }
 
 static const char *_builtin_pwd_get_home (void)
 {
-	char *home = getenv("HOME");
+	static char home[NSH_SHARED_PATHMAX_PATH_MAX] = {0};
+	static bool set = false;
 
-	if (home == NULL)
-	{
-		struct passwd *pw = getpwuid(getuid());
-		if (pw == NULL)
-		{ err_fatal(_BUILTIN_PWD_STAGE_NAME, "trying to access user's information"); }
+	if (set)
+	{ return home; }
 
-		strncpy(_builtin_pwd_cwd, pw->pw_dir, NSH_SHARED_PATHMAX_PATH_MAX);
-	}
-	else
-	{ strncpy(_builtin_pwd_cwd, home, NSH_SHARED_PATHMAX_PATH_MAX); }
+	struct passwd *pw = getpwuid(getuid());
+	if (pw == NULL)
+	{ err_fatal(_BUILTIN_PWD_STAGE_NAME, "trying to access user's information"); }
 
+	strncpy(home, pw->pw_dir, NSH_SHARED_PATHMAX_PATH_MAX);
+	set = true;
 	return home;
 }
