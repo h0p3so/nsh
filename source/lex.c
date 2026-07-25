@@ -53,7 +53,7 @@ static struct LexTok _lex_get_word (const char *cmdline, size_t *offset)
 	};
 
 	char a = tok.source[tok.length];
-	while (isalnum(a) || a == '_' || a == '-')
+	while (isalnum(a) || a == '_' || a == '-' || a == '.')
 	{
 		tok.length++;
 		*offset += 1;
