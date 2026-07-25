@@ -3,6 +3,8 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <unistd.h>
+#include <sys/wait.h>
 #include <sys/stat.h>
 
 #define _EXT_MAX_PATHS 32
@@ -96,5 +98,27 @@ static bool _ext_stat_over (const char *path, const enum StatOver op)
 		case STAT_OVER_IS_EXE: return S_ISREG(s.st_mode) && (s.st_mode & (S_IXUSR | S_IXGRP | S_IXOTH));
 	}
 	return false;
+}
+
+void ext_run_external (const ext_path_t path, const struct ParserTreeCmd *treeCmd)
+{
+	pid_t childpid = fork();
+
+	if (childpid == -1)
+	{ /* TODO */ }
+
+	if (childpid == 0)
+	{
+		execve(path, treeCmd->commandRelated.argv, NULL);
+	}
+	else
+	{
+		static const int32_t anychild = -1;
+		int32_t wstatus;
+
+		do {
+			(void) waitpid(anychild, &wstatus, WUNTRACED);
+		} while (!WIFEXITED(wstatus) && !WIFSIGNALED(wstatus));
+	}
 }
 

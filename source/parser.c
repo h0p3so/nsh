@@ -64,9 +64,9 @@ static struct ParserTreeCmd* _parse_parse_command (const struct LexTok *stream, 
 	NSH_SHARED_CHECKPTR(node->commandRelated.argv, _PARSER_STAGE_NAME, "creating argv for current command");
 
 	/* whatever comes next that is a word will be interpreted as an
-	 * argv to the current command (node)
+	 * argv to the current command (node) including the `head`
 	 */
-	for (size_t i = offset + 1; i < lim; i++)
+	for (size_t i = offset; i < lim; i++)
 	{
 		const struct LexTok lextok = stdv_get(stream, i);
 		if (lextok.type == LEX_TOK_TYPE_EOL)
