@@ -1,3 +1,10 @@
+/*
+ * error handling
+ *
+ * Fatal error reporting with errno support.
+ * Prints a descriptive message and aborts.
+ */
+
 #include "err.h"
 #include "shared/meta.h"
 
