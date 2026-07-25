@@ -1,3 +1,10 @@
+/*
+ * echo built-in
+ *
+ * Prints its arguments to stdout, separated by
+ * spaces, with a trailing newline.
+ */
+
 #ifndef NSH_BUILTIN_ECHO_H
 #define NSH_BUILTIN_ECHO_H
 

@@ -1,3 +1,9 @@
+/*
+ * common types
+ *
+ * Base type definitions.
+ */
+
 #ifndef NSH_SHARED_COMM_H
 #define NSH_SHARED_COMM_H
 

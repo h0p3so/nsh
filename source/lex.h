@@ -1,3 +1,12 @@
+/*
+ * lexer
+ *
+ * Tokenizes a raw command-line string into a stream of
+ * tokens: words, pipes, end-of-line markers etc. Tokens
+ * do not own their data - they point into the caller's
+ * buffer.
+ */
+
 #ifndef NSH_LEX_H
 #define NSH_LEX_H
 
