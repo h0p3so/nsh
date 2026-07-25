@@ -21,8 +21,6 @@ struct IntCwd
 static struct IntCwd _builtin_pwd_cwd = {0};
 static struct IntCwd _builtin_pwd_aux_cwd = {0};
 
-static const char *_builtin_pwd_get_home (void);
-
 void builtin_pwd_set_origin (void)
 {
 	static bool set = false;
@@ -48,47 +46,7 @@ void builtin_pwd_set_origin (void)
 	set = true;
 }
 
-void builtin_pwd_cmd_run (const struct ParserTreeCmd *treeCmd)
-{
-	(void) treeCmd;
-	printf("%s\n", _builtin_pwd_cwd.path);
-}
-
-void builtin_pwd_go_home (void)
-{
-	const char *homepath = _builtin_pwd_get_home();
-	strncpy(	
-		_builtin_pwd_cwd.path,
-		homepath,
-		NSH_SHARED_PATHMAX_PATH_MAX
-	);
-	chdir(_builtin_pwd_cwd.path); // TODO use an internal function to call chdir instead
-}
-
-void builtin_pwd_aux_add (const char *portion, const size_t length)
-{
-	if (_builtin_pwd_aux_cwd.length + length >= NSH_SHARED_PATHMAX_PATH_MAX)
-	{ /* TODO */ }
-
-	snprintf(
-		_builtin_pwd_aux_cwd.path,
-		length + 1,
-		"%s/",
-		portion
-	);
-	_builtin_pwd_aux_cwd.length += length;
-}
-
-void builtin_pwd_clean (void)
-{
-	if (_builtin_pwd_cwd.path)
-	{ free(_builtin_pwd_cwd.path); }
-
-	if (_builtin_pwd_aux_cwd.path)
-	{ free(_builtin_pwd_aux_cwd.path); }
-}
-
-static const char *_builtin_pwd_get_home (void)
+const char *builtin_pwd_get_home (void)
 {
 	static char home[NSH_SHARED_PATHMAX_PATH_MAX] = {0};
 	static bool set = false;
@@ -104,3 +62,52 @@ static const char *_builtin_pwd_get_home (void)
 	set = true;
 	return home;
 }
+
+void builtin_pwd_aux_add (const char *portion, const size_t length)
+{
+	if (_builtin_pwd_aux_cwd.length + length >= NSH_SHARED_PATHMAX_PATH_MAX)
+	{ /* TODO */ }
+
+	snprintf(
+		_builtin_pwd_aux_cwd.path + _builtin_pwd_aux_cwd.length,
+		1 + length,
+		"%s",
+		portion
+	);
+
+	printf("rn: %s\n", _builtin_pwd_aux_cwd.path);
+	_builtin_pwd_aux_cwd.length += length;
+}
+
+void builtin_pwd_aux_complete (void)
+{
+	strncpy(
+		_builtin_pwd_cwd.path,
+		_builtin_pwd_aux_cwd.path,
+		NSH_SHARED_PATHMAX_PATH_MAX
+	);
+
+	memset(_builtin_pwd_aux_cwd.path, 0, _builtin_pwd_aux_cwd.length);
+	_builtin_pwd_aux_cwd.length = 0;
+}
+
+const char *builtin_pwd_get_cwd (void)
+{
+	return _builtin_pwd_cwd.path;
+}
+
+void builtin_pwd_cmd_run (const struct ParserTreeCmd *treeCmd)
+{
+	(void) treeCmd;
+	printf("%s\n", _builtin_pwd_cwd.path);
+}
+
+void builtin_pwd_clean (void) // XXX remove this
+{
+	if (_builtin_pwd_cwd.path)
+	{ free(_builtin_pwd_cwd.path); }
+
+	if (_builtin_pwd_aux_cwd.path)
+	{ free(_builtin_pwd_aux_cwd.path); }
+}
+

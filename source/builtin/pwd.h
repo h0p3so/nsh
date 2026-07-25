@@ -4,8 +4,10 @@
 #include "shared/builtintypes.h"
 
 void builtin_pwd_set_origin (void);
-void builtin_pwd_go_home (void);
+const char *builtin_pwd_get_home (void);
 void builtin_pwd_aux_add (const char*, const size_t);
+void builtin_pwd_aux_complete (void);
+const char *builtin_pwd_get_cwd (void);
 
 void builtin_pwd_cmd_run (const struct ParserTreeCmd*);
 static const struct BuiltInCmd GLOB_BUILTIN_PWD_CMD_META =
