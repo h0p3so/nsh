@@ -1,3 +1,10 @@
+/*
+ * built-in command helpers
+ *
+ * Common definitions shared by all built-in
+ * command implementations.
+ */
+
 #ifndef NSH_BUILTIN_COMM_H
 #define NSH_BUILTIN_COMM_H
 

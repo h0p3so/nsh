@@ -1,3 +1,10 @@
+/*
+ * exit built-in
+ *
+ * Exits the shell with an optional status code.
+ * If no argument is given, exits with 0.
+ */
+
 #include "comm.h"
 #include "builtin.h"
 #include "libs/stdv.h"

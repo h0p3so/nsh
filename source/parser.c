@@ -1,3 +1,11 @@
+/*
+ * parser
+ *
+ * Converts a token stream into a command tree.
+ * Each node represents a command with its name
+ * and argument list.
+ */
+
 #include "parser.h"
 #include "libs/stdv.h"
 #include "shared/checkptr.h"

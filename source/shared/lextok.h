@@ -1,3 +1,10 @@
+/*
+ * lexer token types
+ *
+ * Defines the token types produced by the lexer
+ * and the token struct that points into the input buffer.
+ */
+
 #ifndef NSH_SHARED_LEXTOK_H
 #define NSH_SHARED_LEXTOK_H
 

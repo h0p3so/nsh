@@ -1,3 +1,10 @@
+/*
+ * nsh - naive shell
+ *
+ * Sets up the REPL, reads input from stdin and
+ * drives the pipeline: lexing, parsing, execution.
+ */
+
 #include "shared/comm.h"
 #include "parser.h"
 #include "lex.h"

@@ -1,3 +1,11 @@
+/*
+ * parser
+ *
+ * Converts a token stream into a command tree.
+ * Each node represents a command with its name
+ * and argument list.
+ */
+
 #ifndef NSH_PARSER_H
 #define NSH_PARSER_H
 
