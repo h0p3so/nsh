@@ -1,4 +1,5 @@
 #include "type.h"
+#include "comm.h"
 #include "../builtin.h"
 #include "libs/stdv.h"
 #include "../ext.h"
@@ -10,7 +11,7 @@ void builtin_type_cmd_run (const struct ParserTreeCmd *treeCmd)
 	if (stdv_size(treeCmd->commandRelated.argv) == 0)
 	{ return; }
 
-	const char *cmdname = stdv_get(treeCmd->commandRelated.argv, 1);
+	const char *cmdname = stdv_get(treeCmd->commandRelated.argv, NSH_BUILTIN_COMM_ARG_OFF);
 	const struct BuiltInCmd *isbuiltin = builtin_get(cmdname);
 
 	if (isbuiltin)
