@@ -1,3 +1,10 @@
+/*
+ * path length constants
+ *
+ * Maximum path and filename length limits used
+ * throughout the shell.
+ */
+
 #ifndef NSH_SHARED_PATHMAX_H
 #define NSH_SHARED_PATHMAX_H
 

@@ -1,3 +1,10 @@
+/*
+ * pwd built-in
+ *
+ * Tracks the current working directory and provides
+ * helpers for cd to build paths incrementally.
+ */
+
 #ifndef NSH_BUILTIN_PWD_H
 #define NSH_BUILTIN_PWD_H
 
