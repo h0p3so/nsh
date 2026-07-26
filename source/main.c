@@ -28,7 +28,7 @@ int main (void)
 
 static void _main_setup (void)
 {
-	builtin_pwd_set_origin();
+	//builtin_pwd_set_origin();
 	setbuf(stdout, NULL);
 }
 
