@@ -1,4 +1,5 @@
 #include "path.h"
+#include "builtin/pwd.h"
 
 #include <stdio.h>
 #include <string.h>
@@ -13,16 +14,6 @@
 static struct PathPath _path_resolve (const char*);
 static struct PathPath _path_get_home (void);
 
-struct PathPath path_get_cwd (void)
-{
-	const char *cw = getcwd(NULL, 0);
-
-	struct PathPath p = { .length = strlen(cw), };
-	strncpy(p.path, cw, p.length);
-
-	return p;
-}
-
 struct PathPath path_resolve (const char *raw)
 {
 	char midterm[NSH_SHARED_PATHINFO_PATH_MAX] = {0};
@@ -32,8 +23,8 @@ struct PathPath path_resolve (const char *raw)
 
 	if (*raw == _PATH_REL_START && rawlen == 1)
 	{
-		const struct PathPath curdir = path_get_cwd();
-		strncpy(midterm, curdir.path, NSH_SHARED_PATHINFO_PATH_MAX);
+		const struct PathPath *curdir = builtin_pwd_get_cwd(); // TODO
+		strncpy(midterm, curdir->path, NSH_SHARED_PATHINFO_PATH_MAX);
 		printf("using rel: %s\n", midterm);
 	}
 	else if (*raw == _PATH_ABS_START)
@@ -62,15 +53,14 @@ struct PathPath path_resolve (const char *raw)
 		if (*raw == '.' && rawlen > 1 && raw[1] == '/')
 		{ skip = 2; }
 
-		const struct PathPath curdir = path_get_cwd();
+		const struct PathPath *curdir = builtin_pwd_get_cwd(); // TODO
 
-		if (((rawlen - skip) + curdir.length) >= NSH_SHARED_PATHINFO_PATH_MAX)
+		if (((rawlen - skip) + curdir->length) >= NSH_SHARED_PATHINFO_PATH_MAX)
 		{ /* TODO */ }
 
-		snprintf(midterm, curdir.length + (rawlen - skip) + 2, "%s/%s", curdir.path, raw + skip);
+		snprintf(midterm, curdir->length + (rawlen - skip) + 2, "%s/%s", curdir->path, raw + skip);
 		printf("using curdir: %s\n", midterm);
 	}
-
 
 	return _path_resolve(midterm);
 }
@@ -121,6 +111,7 @@ static struct PathPath _path_resolve (const char *midterm)
 
 	if (path.path[path.length - 1] == '/')
 	{ path.path[--path.length] = '\0'; }
+
 
 	return path;
 }
