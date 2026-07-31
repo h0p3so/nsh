@@ -20,7 +20,7 @@
 
 #define _EXT_STAGE_NAME "external"
 
-struct Path
+struct Path // TODO use PathPath instead
 {
 	char path[NSH_SHARED_PATHINFO_PATH_MAX];
 	size_t length;
