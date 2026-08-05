@@ -10,29 +10,20 @@
 #define _PATH_ABS_START  '/'
 #define _PATH_HOME_START '~'
 
-static struct Path _path_resolve (const char*);
+static struct PathPath _path_resolve (const char*);
+static struct PathPath _path_get_home (void);
 
-struct Path path_get_cwd (void)
+struct PathPath path_get_cwd (void)
 {
 	const char *cw = getcwd(NULL, 0);
 
-	struct Path p = { .length = strlen(cw), .isInvalid = false };
+	struct PathPath p = { .length = strlen(cw), };
 	strncpy(p.path, cw, p.length);
 
 	return p;
 }
 
-struct Path path_get_home (void)
-{
-	const char *home = getenv("HOME");
-
-	struct Path p = { .length = strlen(home), .isInvalid = false };
-	strncpy(p.path, home, p.length);
-
-	return p;
-}
-
-struct Path path_resolve (const char *raw)
+struct PathPath path_resolve (const char *raw)
 {
 	char midterm[NSH_SHARED_PATHINFO_PATH_MAX] = {0};
 	const size_t rawlen = strlen(raw);
@@ -41,7 +32,7 @@ struct Path path_resolve (const char *raw)
 
 	if (*raw == _PATH_REL_START && rawlen == 1)
 	{
-		const struct Path curdir = path_get_cwd();
+		const struct PathPath curdir = path_get_cwd();
 		strncpy(midterm, curdir.path, NSH_SHARED_PATHINFO_PATH_MAX);
 		printf("using rel: %s\n", midterm);
 	}
@@ -52,7 +43,7 @@ struct Path path_resolve (const char *raw)
 	}
 	else if (*raw == _PATH_HOME_START)
 	{
-		const struct Path home = path_get_home();
+		const struct PathPath home = _path_get_home();
 		const size_t rawlenwithnotilde = rawlen - 1;
 
 		if (rawlenwithnotilde + home.length >= NSH_SHARED_PATHINFO_PATH_MAX)
@@ -71,7 +62,7 @@ struct Path path_resolve (const char *raw)
 		if (*raw == '.' && rawlen > 1 && raw[1] == '/')
 		{ skip = 2; }
 
-		const struct Path curdir = path_get_cwd();
+		const struct PathPath curdir = path_get_cwd();
 
 		if (((rawlen - skip) + curdir.length) >= NSH_SHARED_PATHINFO_PATH_MAX)
 		{ /* TODO */ }
@@ -84,21 +75,16 @@ struct Path path_resolve (const char *raw)
 	return _path_resolve(midterm);
 }
 
-static struct Path _path_resolve (const char *midterm)
+static struct PathPath _path_resolve (const char *midterm)
 {
-	struct Path path = {0};
+	struct PathPath path = {0};
 	const size_t lim = strlen(midterm);
 
 	path.path[path.length++] = '/';
 
-	for (size_t i = 0; i < lim && !path.isInvalid && path.length < NSH_SHARED_PATHINFO_PATH_MAX; i++)
+	for (size_t i = 0; i < lim && path.length < NSH_SHARED_PATHINFO_PATH_MAX; i++)
 	{
 		const bool theresroom = ((i + 1) < lim);
-
-		if (midterm[i] == '.' && theresroom && midterm[i + 1] == '/')
-		{ /* TODO */ }
-		if (midterm[i] == _PATH_HOME_START)
-		{ /* TODO */ }
 
 		const size_t start = i;
 		while (midterm[i] != '/' && i < lim) i++;
@@ -136,9 +122,15 @@ static struct Path _path_resolve (const char *midterm)
 	if (path.path[path.length - 1] == '/')
 	{ path.path[--path.length] = '\0'; }
 
-	printf("final: %s <%d> (%ld)\n", path.path, path.path[path.length], path.length);
-	puts("-*-*-");
 	return path;
 }
 
-//home/exupery/Documents/programming/lowlevel/nsh/source/..
+static struct PathPath _path_get_home (void) // TODO
+{
+	const char *home = getenv("HOME");
+
+	struct PathPath p = { .length = strlen(home) };
+	strncpy(p.path, home, p.length);
+
+	return p;
+}
