@@ -28,6 +28,7 @@ int main (void)
 
 static void _main_setup (void)
 {
+	(void) builtin_pwd_get_cwd();
 	setbuf(stdout, NULL);
 }
 
