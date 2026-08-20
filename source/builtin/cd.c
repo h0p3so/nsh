@@ -13,7 +13,7 @@
 
 #include <unistd.h>
 #include <errno.h>
-#include <stdio.h> // XXX
+#include <stdio.h>
 
 void builtin_cd_cmd_run (const struct ParserTreeCmd *treeCmd)
 {

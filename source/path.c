@@ -19,11 +19,9 @@ struct PathPath path_resolve (const char *raw)
 	char midterm[NSH_SHARED_PATHINFO_PATH_MAX] = {0};
 	const size_t rawlen = strlen(raw);
 
-	// TODO: handle base cases such as ~ . or /
-
 	if (*raw == _PATH_REL_START && rawlen == 1)
 	{
-		const struct PathPath *curdir = builtin_pwd_get_cwd(); // TODO
+		const struct PathPath *curdir = builtin_pwd_get_cwd();
 		strncpy(midterm, curdir->path, NSH_SHARED_PATHINFO_PATH_MAX);
 		printf("using rel: %s\n", midterm);
 	}
@@ -53,7 +51,7 @@ struct PathPath path_resolve (const char *raw)
 		if (*raw == '.' && rawlen > 1 && raw[1] == '/')
 		{ skip = 2; }
 
-		const struct PathPath *curdir = builtin_pwd_get_cwd(); // TODO
+		const struct PathPath *curdir = builtin_pwd_get_cwd();
 
 		if (((rawlen - skip) + curdir->length) >= NSH_SHARED_PATHINFO_PATH_MAX)
 		{ /* TODO */ }
@@ -116,7 +114,7 @@ static struct PathPath _path_resolve (const char *midterm)
 	return path;
 }
 
-static struct PathPath _path_get_home (void) // TODO
+static struct PathPath _path_get_home (void) // TODO optimize
 {
 	const char *home = getenv("HOME");
 
