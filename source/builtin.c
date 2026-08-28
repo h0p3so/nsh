@@ -10,11 +10,13 @@
 #include "builtin/exit.h"
 #include "builtin/echo.h"
 #include "builtin/type.h"
+#include "builtin/pwd.h"
+#include "builtin/cd.h"
 
 #include <stdlib.h>
 #include <string.h>
 
-#define _BUILTIN_COUNT 3
+#define _BUILTIN_COUNT 5
 
 static const struct BuiltInCmd *_builtin_get_all (void);
 static int32_t _builtin_sort (const void*, const void*);
@@ -38,6 +40,8 @@ static const struct BuiltInCmd *_builtin_get_all (void)
 		GLOB_BUILTIN_EXIT_CMD_META,
 		GLOB_BUILTIN_ECHO_CMD_META,
 		GLOB_BUILTIN_TYPE_CMD_META,
+		GLOB_BUILTIN_PWD_CMD_META ,
+		GLOB_BUILTIN_CD_CMD_META  ,
 	};
 
 	if (!set)

@@ -1,3 +1,80 @@
 
 	nsh: naive shell
 
+
+
+TODO
+	Quoting
+	[ ] single quotes
+	[ ] double quotes
+	[ ] backslash outside quotes
+	[ ] backslash within single quotes
+	[ ] backslash within double quotes
+	[ ] executing a double executable
+
+	Redirection
+	[ ] redirect stdout
+	[ ] redirect stderr
+	[ ] append stdout
+	[ ] append stderr
+
+	Command completion
+	[ ] builtin completion
+	[ ] completion with arguments
+	[ ] missing completions
+	[ ] multiple completions
+	[ ] partial completions	
+
+	Filename completion
+	[ ] file completion
+	[ ] printing missing specifications
+	[ ] displaying registered specifications
+	[ ] single completion
+	[ ] handling no completions
+	[ ] passing command-line arguments
+	[ ] passing env variables
+	[ ] multiple completer candidates
+	[ ] longest common prefix
+	[ ] unregister a completion
+
+	Background jobs
+	[ ] the jobs builtin
+	[ ] starting background jobs
+	[ ] printing background job output
+	[ ] list a single job
+	[ ] list multiple jobs
+	[ ] reap one job
+	[ ] reap multiple jobs
+	[ ] reap before next prompt
+	[ ] recycle job numbers
+
+	Pipelines
+	[ ] dual command pipeline
+	[ ] pipelines with built-ins
+	[ ] mult-command pipelines
+
+	History
+	[ ] the history builtin
+	[ ] listing history
+	[ ] limiting history entries
+	[ ] up-arrow nav
+	[ ] down-arrow nav
+	[ ] executing commands from history
+
+	History persistence
+	[ ] read history from file
+	[ ] write history to file
+	[ ] append history to file
+	[ ] read history on startup
+	[ ] write history on exit
+	[ ] append history on exit
+
+	Parameter expansion
+	[ ] the declare builtin
+	[ ] printing missing variables
+	[ ] storing shell variables
+	[ ] validating variable names
+	[ ] expanding variables
+	[ ] expansion with braces
+	[ ] expanding empty variables
+

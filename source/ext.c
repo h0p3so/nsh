@@ -20,9 +20,9 @@
 
 #define _EXT_STAGE_NAME "external"
 
-struct Path
+struct Path // TODO use PathPath instead
 {
-	char path[NSH_EXT_PATH_MAX];
+	char path[NSH_SHARED_PATHINFO_PATH_MAX];
 	size_t length;
 };
 
@@ -53,7 +53,7 @@ bool ext_is_command_external (const char *cmdname, ext_path_t *dest)
 		const struct Path path = tpaths->paths[i];
 		const size_t fullpathlen = path.length + cmdnamelen + plusSlash;
 
-		if (fullpathlen >= NSH_EXT_PATH_MAX + NSH_EXT_NAME_MAX)
+		if (fullpathlen >= NSH_SHARED_PATHINFO_PATH_MAX + NSH_SHARED_PATHINFO_NAME_MAX)
 		{ continue; }
 
 		snprintf(*dest, fullpathlen + 1, "%s/%s", path.path, cmdname);
@@ -79,7 +79,7 @@ static const struct TotalPaths *_ext_load_paths (const bool force)
 	for (size_t i = 0; i < lim && tpaths.total < _EXT_MAX_PATHS; i++)
 	{
 		const size_t pathlen = strcspn(envPaths + i, _EXT_ENVPATH_DELIMITERS);
-		if (pathlen > NSH_EXT_PATH_MAX)
+		if (pathlen > NSH_SHARED_PATHINFO_PATH_MAX)
 		{ continue; }
 
 		struct Path path = { .length = pathlen };
